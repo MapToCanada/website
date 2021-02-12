@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: maptocanada-nginx-test
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 30
+  template:
+    spec:
+      imagePullSecrets:
+        - name: yeti2-pull-secret
+      restartPolicy: Never
+      containers:
+        - name: maptocanada-nginx-test
+          image: maptocanada/frontend:__COMMIT_TAG__
+          imagePullPolicy: Always
+          command: ["nginx", "-t"]

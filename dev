@@ -1,0 +1,50 @@
+#!/bin/bash
+while [ "$1" != "" ]
+do
+    case "$1" in
+        backend)
+            mkdir -p ./tmp/{db,pyenv,data}
+            docker-compose -f docker-compose.dev.yml run -p 8000:8000 backend bash
+            ;;
+        frontend)
+            docker-compose -f docker-compose.dev.yml run -p 9000:9000 frontend bash
+            ;;
+        start)
+            yarn install
+            yarn start
+            ;;
+        run)
+            pipenv run python3 manage.py migrate
+            pipenv run python3 manage.py runserver 0.0.0.0:8000
+            ;;
+        mkmsg)
+            pipenv run python3 manage.py makemessages -l en
+            ;;
+        comsg)
+            pipenv run python3 manage.py compilemessages -l en
+            ;;
+        makemigrations)
+            pipenv run python3 manage.py makemigrations
+            ;;
+        migrate)
+            pipenv run python3 manage.py migrate
+            ;;
+        test)
+            pipenv run python3 manage.py test
+            ;;
+        coverage)
+            pipenv run coverage run --source='.' manage.py test
+            pipenv run coverage report
+            ;;
+        down)
+            docker-compose -f docker-compose.dev.yml down
+            ;;
+        docker-restart)
+            docker start $(docker ps -a -q -f status=exited)
+            ;;
+        -h | --help)
+            echo $"Usage: $0 {backend|frontend|down|run|start|docker-restart}"
+            exit 1
+    esac
+    shift
+done

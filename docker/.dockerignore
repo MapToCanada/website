@@ -1,0 +1,6 @@
+code-server
+k8s
+.venv
+assets
+.git
+README.md

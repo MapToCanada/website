@@ -1,0 +1,12 @@
+version: "3.5"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        - api_host=
+        - api_prefix=
+        - path_prefix=
+    image: maptocanada/frontend:__COMMIT_TAG__

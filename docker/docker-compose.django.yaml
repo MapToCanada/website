@@ -1,0 +1,10 @@
+version: "3.5"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.django
+      args:
+        - PROJECT_PATH=/maptocanada
+    image: maptocanada/django:__COMMIT_TAG__

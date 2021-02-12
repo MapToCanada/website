@@ -1,0 +1,29 @@
+ARG api_host
+ARG api_prefix
+ARG path_prefix
+
+FROM freeyeti/dev-in-docker:node-12-yarn-2 as builder
+
+ARG api_host
+ARG api_prefix
+ARG path_prefix
+
+ENV API_HOST=${api_host}
+ENV API_PREFIX=${api_prefix}
+ENV PATH_PREFIX=${path_prefix}
+
+RUN mkdir /maptocanada
+WORKDIR /maptocanada
+COPY . .
+
+RUN yarn install && yarn build \
+    && mv ./assets /assets
+
+FROM nginx:1.19.6
+
+COPY --from=builder /assets /assets
+COPY ./nginx-site.conf /etc/nginx/conf.d/default.conf
+
+WORKDIR /
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

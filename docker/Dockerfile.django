@@ -1,0 +1,48 @@
+ARG PROJECT_PATH=/maptocanada
+
+FROM freeyeti/dev-in-docker:pyinstaller AS backend
+
+ARG PROJECT_PATH
+RUN mkdir -p $PROJECT_PATH
+WORKDIR $PROJECT_PATH
+COPY . .
+
+# Create data dir
+RUN mkdir /data
+
+# Project initalization
+ENV DJANGO_SETTINGS_MODULE "maptocanada.settings_build"
+
+RUN pipenv lock -r > requirements.txt \
+    && pip3 install --no-cache-dir -r requirements.txt \
+    && pyinstaller app.spec
+
+FROM freeyeti/dev-in-docker:ubuntu20.04-gdal AS django
+
+ARG PROJECT_PATH
+WORKDIR /$PROJECT_PATH
+
+# Set timezone
+ENV TZ Etc/UTC
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Set LANG
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+ENV LANGUAGE en_US:en
+
+ENV DJANGO_SETTINGS_MODULE "maptocanada.settings"
+
+RUN mkdir -p /data 
+
+COPY --from=backend /$PROJECT_PATH/dist/manage/ .
+COPY --from=backend /$PROJECT_PATH/dist/app/app ./app
+
+EXPOSE 8000
+VOLUME [ "/data" ]
+
+# CMD ["./manage", "runserver", "--noreload", "0.0.0.0:8000"]
+# RUN chmod +x ./docker-entrypoint.sh
+# EXPOSE 9000
+# # ENTRYPOINT ["./docker-entrypoint.sh"]
+# CMD ./docker-entrypoint.sh

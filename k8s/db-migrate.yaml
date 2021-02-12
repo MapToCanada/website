@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: maptocanada-db-migrate
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 60
+  template:
+    spec:
+      imagePullSecrets:
+        - name: yeti2-pull-secret
+      restartPolicy: Never
+      containers:
+        - name: maptocanada-db-migrate
+          image: maptocanada/django:__COMMIT_TAG__
+          imagePullPolicy: Always
+          command: ["./manage", "migrate"]
+          envFrom:
+            - configMapRef:
+                name: maptocanada-env-config
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: maptocanada.settings

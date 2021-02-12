@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maptocanada-django
+spec:
+  selector:
+    matchLabels:
+      app: maptocanada-django
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: maptocanada-django
+    spec:
+      imagePullSecrets:
+        - name: yeti2-pull-secret
+      containers:
+        - name: maptocanada-django
+          image: maptocanada/django:__COMMIT_TAG__
+          command: ["./app"]
+          envFrom:
+            - configMapRef:
+                name: maptocanada-env-config
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: www-data
+              mountPath: /data
+          resources:
+            limits:
+              memory: 1024Mi
+              cpu: "0.2"
+      volumes:
+        - name: www-data
+          hostPath:
+            path: /root/data/maptocanada

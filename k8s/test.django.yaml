@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: maptocanada-django-test
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 300
+  template:
+    spec:
+      imagePullSecrets:
+        - name: yeti2-pull-secret
+      restartPolicy: Never
+      containers:
+        - name: maptocanada-django-test
+          image: freeyeti/dev-in-docker:python3-gis
+          imagePullPolicy: Always
+          command: ["./docker-entrypoint-test.sh"]
+          envFrom:
+            - configMapRef:
+                name: maptocanada-env-config
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: maptocanada.settings
+          volumeMounts:
+            - name: www-data
+              mountPath: /data
+            - name: code
+              mountPath: /code
+      volumes:
+        - name: www-data
+          hostPath:
+            path: /root/data/maptocanada.today
+        - name: code
+          hostPath:
+            path: __CODE_PATH__

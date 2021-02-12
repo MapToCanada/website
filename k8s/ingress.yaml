@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: maptocanada
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    traefik.frontend.rule.type: PathPrefixStrip
+    cert-manager.io/cluster-issuer: maptocanada-issuer
+    ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+    - hosts:
+        - maptocanada.com
+      secretName: maptocanada-private-key
+  rules:
+    - host: maptocanada.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: maptocanada-frontend
+                port:
+                  number: 80
+          - path: /backend
+            pathType: Prefix
+            backend:
+              service:
+                name: maptocanada-django
+                port:
+                  number: 8000

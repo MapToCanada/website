@@ -1,0 +1,27 @@
+version: "3.5"
+
+services:
+  database:
+    image: postgis/postgis:13-3.0
+    ports:
+      - "0.0.0.0:5432:5432"
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    env_file: .env
+  backend:
+    image: freeyeti/dev-in-docker:python3-gis
+    env_file: .env
+    ports:
+      - "0.0.0.0:8000:8000"
+    volumes:
+      - .:/code
+      - ./tmp/data:/data
+    depends_on:
+      - database
+  frontend:
+    image: freeyeti/dev-in-docker:node-12-yarn-2
+    env_file: .env
+    ports:
+      - "0.0.0.0:9000:9000"
+    volumes:
+      - .:/code

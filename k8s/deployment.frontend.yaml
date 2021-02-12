@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maptocanada-frontend
+spec:
+  selector:
+    matchLabels:
+      app: maptocanada-frontend
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: maptocanada-frontend
+    spec:
+      imagePullSecrets:
+        - name: yeti2-pull-secret
+      containers:
+        - name: maptocanada-frontend
+          image: maptocanada/frontend:__COMMIT_TAG__
+          imagePullPolicy: Always
+          command: ["nginx", "-g", "daemon off;"]
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: "0.1"
