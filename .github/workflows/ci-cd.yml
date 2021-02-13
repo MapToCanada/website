@@ -223,6 +223,7 @@ jobs:
         env:
           IMAGE_TAG: ${{ steps.vars.outputs.tag }}
         run: |
+          sed -i "s@__IMAGE_NAME_NGINX__@$IMAGE_NAME_NGINX@g" k8s/test.nginx.yaml
           sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/test.nginx.yaml
           kubectl delete -f k8s/test.nginx.yaml || echo "Nginx testing job is not exists"
           kubectl apply -f k8s/test.nginx.yaml
@@ -268,6 +269,8 @@ jobs:
           IMAGE_TAG: ${{ steps.vars.outputs.tag }}
         run: |
           sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/migrate.yaml
+          sed -i "s@__IMAGE_NAME_DJANGO__@$IMAGE_NAME_DJANGO@g" k8s/migrate.yaml
+
           kubectl delete -f k8s/migrate.yaml || echo "Database migration job is not exists"
           kubectl apply -f k8s/migrate.yaml
           kubectl wait --timeout=300s --for=condition=complete jobs/maptocanada-db-migrate
@@ -312,10 +315,15 @@ jobs:
           IMAGE_TAG: ${{ steps.vars.outputs.tag }}
         run: |
           sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/deployment.django.yaml
+          sed -i "s@__IMAGE_NAME_DJANGO__@$IMAGE_NAME_DJANGO@g" k8s/deployment.django.yaml
           sed -i "s@__DATA_PATH__@$MAPTOCANADA_DATA@g" k8s/deployment.django.yaml
+
           sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/deployment.frontend.yaml
+          sed -i "s@__IMAGE_NAME_NGINX__@$IMAGE_NAME_NGINX@g" k8s/deployment.frontend.yaml
+
           kubectl apply -f k8s/deployment.django.yaml
           kubectl apply -f k8s/deployment.nginx.yaml
+
           kubectl apply -f k8s/clusterissuer.yaml
           kubectl apply -f k8s/service.nginx.yaml
           kubectl apply -f k8s/service.django.yaml
