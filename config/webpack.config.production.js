@@ -12,7 +12,7 @@ module.exports = {
   output: {
     path: path.resolve(path.dirname(__dirname), "assets"),
     filename: "[name].[fullhash].dev.js",
-    publicPath: "https://maptocanada/",
+    publicPath: "https://maptocanada.ca/",
     chunkFilename: "[name].[id].js",
   }, // output
   resolve: {
