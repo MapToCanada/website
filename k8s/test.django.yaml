@@ -29,7 +29,7 @@ spec:
       volumes:
         - name: www-data
           hostPath:
-            path: /root/data/maptocanada.today
+            path: __DATA_PATH__
         - name: code
           hostPath:
             path: __CODE_PATH__

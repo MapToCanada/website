@@ -182,6 +182,7 @@ jobs:
           IMAGE_TAG: ${{ steps.vars.outputs.tag }}
         run: |
           sed -i "s@__CODE_PATH__@$(pwd)@g" k8s/test.django.yaml
+          sed -i "s@__DATA_PATH__@$DATA_PATH@g" k8s/test.django.yaml
           kubectl delete -f k8s/test.django.yaml || echo "Django testing job is not exists"
           kubectl apply -f k8s/test.django.yaml
           kubectl wait --timeout=600s --for=condition=complete jobs/maptocanada-django-test
