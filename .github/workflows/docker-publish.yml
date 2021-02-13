@@ -33,6 +33,13 @@ jobs:
       - name: Check output
         run: |
           echo ${{ steps.vars.outputs.tag }}
+          echo ${{ steps.vars.outputs.tag }} > version.txt
+          
+      - name: Upload version file
+        uses: actions/upload-artifact@v2
+        with:
+          name: deployment
+          path: version.txt
 
   # Build and push image to Docker registry.
   build-django:
@@ -42,9 +49,18 @@ jobs:
     runs-on: maptocanada-yeti2
 
     steps:
+      - name: Download math result for job 1
+        uses: actions/download-artifact@v2
+        with:
+          name: deployment
+  
+      - name: Set image version
+        id: vars
+        run: echo ::set-output name=tag::$(cat version.txt)
+        
       - uses: actions/checkout@v2
         env:
-          IMAGE_TAG: ${{ jobs.config.steps.vars.outputs.tag }}
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
 
       - name: Build Django image
         run: |
@@ -63,3 +79,9 @@ jobs:
       - name: Push image
         run: |
           docker push $IMAGE_NAME_DJANGO:$IMAGE_TAG
+          
+      - name: Upload docker-compose.django.yaml
+        uses: actions/upload-artifact@v2
+        with:
+          name: deployment
+          path: docker-compose.django.yaml
