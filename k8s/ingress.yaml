@@ -11,10 +11,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - maptocanada.com
+        - maptocanada.ca
       secretName: maptocanada-private-key
   rules:
-    - host: maptocanada.com
+    - host: maptocanada.ca
       http:
         paths:
           - path: /
