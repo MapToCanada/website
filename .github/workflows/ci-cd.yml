@@ -1,4 +1,4 @@
-name: MapToCanada-CI-CD
+name: CI-CD
 
 on:
   push:
@@ -61,16 +61,27 @@ jobs:
       - uses: actions/checkout@v2
         env:
           IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+          
+      - name: Check image version
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $IMAGE_TAG
 
-      - name: Build Django image
+      - name: Copy docker files
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
         run: |
           cp docker/.dockerignore ./
-          
           cp docker/Dockerfile.django ./
           cp docker/docker-compose.django.yaml ./
           cp docker/app.py ./
           cp docker/app.spec ./
           
+      - name: Build image
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
           echo $IMAGE_TAG
           sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" docker-compose.django.yaml
           sed -i "s@__IMAGE_NAME_DJANGO__@$IMAGE_NAME_DJANGO@g" docker-compose.django.yaml
