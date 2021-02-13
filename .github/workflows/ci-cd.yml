@@ -8,6 +8,7 @@ env:
   # Define image names
   IMAGE_NAME_DJANGO: map2canada/django
   IMAGE_NAME_NGINX: map2canada/nginx
+  DATA_PATH: /root/data/maptocanada
 
 jobs:
   # Apply configmap to Kubernetes
@@ -310,13 +311,13 @@ jobs:
         run: |
           echo $IMAGE_TAG
 
-      - name: Migrate the project database
+      - name: Apply k8s YAML files
         env:
           IMAGE_TAG: ${{ steps.vars.outputs.tag }}
         run: |
           sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/deployment.django.yaml
           sed -i "s@__IMAGE_NAME_DJANGO__@$IMAGE_NAME_DJANGO@g" k8s/deployment.django.yaml
-          sed -i "s@__DATA_PATH__@$MAPTOCANADA_DATA@g" k8s/deployment.django.yaml
+          sed -i "s@__DATA_PATH__@$DATA_PATH@g" k8s/deployment.django.yaml
 
           sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/deployment.frontend.yaml
           sed -i "s@__IMAGE_NAME_NGINX__@$IMAGE_NAME_NGINX@g" k8s/deployment.frontend.yaml
