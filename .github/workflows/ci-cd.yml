@@ -183,9 +183,15 @@ jobs:
           sed -i "s@__CODE_PATH__@$(pwd)@g" k8s/test.django.yaml
           kubectl delete -f k8s/test.django.yaml || echo "Django testing job is not exists"
           kubectl apply -f k8s/test.django.yaml
-          kubectl wait --timeout=300s --for=condition=complete jobs/maptocanada-django-test
+          kubectl wait --timeout=600s --for=condition=complete jobs/maptocanada-django-test
           kubectl logs -f jobs/maptocanada-django-test
           kubectl delete -f k8s/test.django.yaml
+
+      - name: Upload k8s/test.django.yaml
+        uses: actions/upload-artifact@v2
+        with:
+          name: deployment
+          path: k8s/test.django.yaml
 
   # Test Nginx configuration.
   test-nginx:
@@ -220,9 +226,15 @@ jobs:
           sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/test.nginx.yaml
           kubectl delete -f k8s/test.nginx.yaml || echo "Nginx testing job is not exists"
           kubectl apply -f k8s/test.nginx.yaml
-          kubectl wait --timeout=30s --for=condition=complete jobs/maptocanada-nginx-test
+          kubectl wait --timeout=300s --for=condition=complete jobs/maptocanada-nginx-test
           kubectl logs -f jobs/maptocanada-nginx-test
           kubectl delete -f k8s/test.nginx.yaml
+        
+      - name: Upload k8s/test.nginx.yaml
+        uses: actions/upload-artifact@v2
+        with:
+          name: deployment
+          path: k8s/test.nginx.yaml
 
   # Migrate the project database
   migrate:
@@ -258,9 +270,15 @@ jobs:
           sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/migrate.yaml
           kubectl delete -f k8s/migrate.yaml || echo "Database migration job is not exists"
           kubectl apply -f k8s/migrate.yaml
-          kubectl wait --timeout=60s --for=condition=complete jobs/maptocanada-db-migrate
+          kubectl wait --timeout=300s --for=condition=complete jobs/maptocanada-db-migrate
           kubectl logs -f jobs/maptocanada-db-migrate
           kubectl delete -f k8s/migrate.yaml
+
+      - name: Upload k8s/migrate.yaml
+        uses: actions/upload-artifact@v2
+        with:
+          name: deployment
+          path: k8s/migrate.yaml
 
   # Deploy to k8s
   deploy:
@@ -302,3 +320,15 @@ jobs:
           kubectl apply -f k8s/service.nginx.yaml
           kubectl apply -f k8s/service.django.yaml
           kubectl apply -f k8s/ingress.yaml
+
+      - name: Upload kubernetes config
+        uses: actions/upload-artifact@v2
+        with:
+          name: deployment
+          path: |
+            k8s/deployment.django.yaml
+            k8s/deployment.nginx.yaml
+            k8s/clusterissuer.yaml
+            k8s/service.nginx.yaml
+            k8s/service.django.yaml
+            k8s/ingress.yaml

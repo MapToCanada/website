@@ -1,7 +1,7 @@
 version: "3.5"
 
 services:
-  database:
+  postgis:
     image: postgis/postgis:13-3.0
     ports:
       - "0.0.0.0:5432:5432"
@@ -17,7 +17,7 @@ services:
       - .:/code
       - ./tmp/data:/data
     depends_on:
-      - database
+      - postgis
   frontend:
     image: freeyeti/dev-in-docker:node-12-yarn-2
     env_file: .env
