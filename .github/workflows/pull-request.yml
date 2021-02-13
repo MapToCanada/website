@@ -1,0 +1,49 @@
+name: CI-CD
+
+on:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+
+env:
+  # Define image names
+  DJANGO_TEST_IMAGE: freeyeti/dev-in-docker:python3-gis
+  FRONTEND_TEST_IMAGE: freeyeti/dev-in-docker:node-12-yarn-2
+  NGINX_TEST_IMAGE: nginx:1.19.6
+
+jobs:
+  # TODO run django testing
+  test-django:
+    runs-on: maptocanada-yeti2
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Apply configmap
+        run: |
+          cat k8s/test.django.yaml
+          echo $(pwd)
+  
+  test-nodejs:
+    needs: test-django
+    runs-on: maptocanada-yeti2
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Apply configmap
+        run: |
+          cat k8s/test.django.yaml
+          echo $(pwd)
+
+  test-nginx:
+    needs: test-nodejs
+
+    runs-on: maptocanada-yeti2
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Apply configmap
+        run: |
+          cat k8s/test.nginx.yaml
+          echo $(pwd)
