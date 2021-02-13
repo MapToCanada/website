@@ -1,7 +1,7 @@
 version: "3.5"
 
 services:
-  frontend:
+  django:
     build:
       context: .
       dockerfile: Dockerfile.django
