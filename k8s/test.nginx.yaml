@@ -12,6 +12,6 @@ spec:
       restartPolicy: Never
       containers:
         - name: maptocanada-nginx-test
-          image: maptocanada/frontend:__COMMIT_TAG__
+          image: __IMAGE_NAME_NGINX__:__COMMIT_TAG__
           imagePullPolicy: Always
           command: ["nginx", "-t"]

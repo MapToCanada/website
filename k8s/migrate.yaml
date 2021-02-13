@@ -12,7 +12,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: maptocanada-db-migrate
-          image: maptocanada/django:__COMMIT_TAG__
+          image: __IMAGE_NAME_DJANGO__:__COMMIT_TAG__
           imagePullPolicy: Always
           command: ["./manage", "migrate"]
           envFrom:

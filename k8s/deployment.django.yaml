@@ -21,7 +21,7 @@ spec:
         - name: yeti2-pull-secret
       containers:
         - name: maptocanada-django
-          image: maptocanada/django:__COMMIT_TAG__
+          image: __IMAGE_NAME_DJANGO__:__COMMIT_TAG__
           command: ["./app"]
           envFrom:
             - configMapRef:

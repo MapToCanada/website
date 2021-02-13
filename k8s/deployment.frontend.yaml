@@ -21,7 +21,7 @@ spec:
         - name: yeti2-pull-secret
       containers:
         - name: maptocanada-frontend
-          image: maptocanada/frontend:__COMMIT_TAG__
+          image: __IMAGE_NAME_NGINX__:__COMMIT_TAG__
           imagePullPolicy: Always
           command: ["nginx", "-g", "daemon off;"]
           ports:
