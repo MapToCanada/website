@@ -38,4 +38,4 @@ spec:
       volumes:
         - name: www-data
           hostPath:
-            path: /root/data/maptocanada
+            path: __DATA_PATH__

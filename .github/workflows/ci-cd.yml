@@ -44,7 +44,7 @@ jobs:
     runs-on: maptocanada-yeti2
 
     steps:
-      - name: Download math result for job 1
+      - name: Download version.txt
         uses: actions/download-artifact@v2
         with:
           name: deployment
@@ -64,8 +64,6 @@ jobs:
           echo $IMAGE_TAG
 
       - name: Copy docker files
-        env:
-          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
         run: |
           cp docker/.dockerignore ./
           cp docker/Dockerfile.django ./
@@ -77,7 +75,6 @@ jobs:
         env:
           IMAGE_TAG: ${{ steps.vars.outputs.tag }}
         run: |
-          echo $IMAGE_TAG
           sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" docker-compose.django.yaml
           sed -i "s@__IMAGE_NAME_DJANGO__@$IMAGE_NAME_DJANGO@g" docker-compose.django.yaml
           docker-compose -f docker-compose.django.yaml build
@@ -93,3 +90,215 @@ jobs:
         with:
           name: deployment
           path: docker-compose.django.yaml
+
+  # Build Frontend container image and push the image to Docker registry.
+  build-frontend:
+    # Ensure config job passes before building image.
+    needs: config
+
+    runs-on: maptocanada-yeti2
+
+    steps:
+      - name: Download version.txt
+        uses: actions/download-artifact@v2
+        with:
+          name: deployment
+  
+      - name: Set image version
+        id: vars
+        run: echo ::set-output name=tag::$(cat version.txt)
+        
+      - uses: actions/checkout@v2
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+          
+      - name: Check image version
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $IMAGE_TAG
+
+      - name: Copy docker files
+        run: |
+          cp docker/.dockerignore ./
+          cp docker/Dockerfile.frontend ./
+          cp docker/docker-compose.frontend.yaml ./
+          cp docker/nginx-site.conf ./
+
+      - name: Build image
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" docker-compose.frontend.yaml
+          sed -i "s@__IMAGE_NAME_NGINX__@$IMAGE_NAME_NGINX@g" docker-compose.frontend.yaml
+          docker-compose -f docker-compose.frontend.yaml build
+
+      - name: Push image
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          docker push $IMAGE_NAME_NGINX:$IMAGE_TAG
+          
+      - name: Upload docker-compose.frontend.yaml
+        uses: actions/upload-artifact@v2
+        with:
+          name: deployment
+          path: docker-compose.frontend.yaml
+
+  # Test Django application.
+  test-django:
+    # Ensure django image is built before run testing.
+    needs: build-django
+
+    runs-on: maptocanada-yeti2
+
+    steps:
+      - name: Download version.txt
+        uses: actions/download-artifact@v2
+        with:
+          name: deployment
+  
+      - name: Set image version
+        id: vars
+        run: echo ::set-output name=tag::$(cat version.txt)
+        
+      - uses: actions/checkout@v2
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+          
+      - name: Check image version
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $IMAGE_TAG
+
+      - name: Added test entry-point
+        run: |
+          cp ./docker/docker-entrypoint-test.sh ./
+
+      - name: Run testing
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          sed -i "s@__CODE_PATH__@$(pwd)@g" k8s/test.django.yaml
+          kubectl delete -f k8s/test.django.yaml || echo "Django testing job is not exists"
+          kubectl apply -f k8s/test.django.yaml
+          kubectl wait --timeout=300s --for=condition=complete jobs/maptocanada-django-test
+          kubectl logs -f jobs/maptocanada-django-test
+          kubectl delete -f k8s/test.django.yaml
+
+  # Test Nginx configuration.
+  test-nginx:
+    needs: build-frontend
+
+    runs-on: maptocanada-yeti2
+
+    steps:
+      - name: Download version.txt
+        uses: actions/download-artifact@v2
+        with:
+          name: deployment
+  
+      - name: Set image version
+        id: vars
+        run: echo ::set-output name=tag::$(cat version.txt)
+        
+      - uses: actions/checkout@v2
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+          
+      - name: Check image version
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $IMAGE_TAG
+
+      - name: Run testing
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/test.nginx.yaml
+          kubectl delete -f k8s/test.nginx.yaml || echo "Nginx testing job is not exists"
+          kubectl apply -f k8s/test.nginx.yaml
+          kubectl wait --timeout=30s --for=condition=complete jobs/maptocanada-nginx-test
+          kubectl logs -f jobs/maptocanada-nginx-test
+          kubectl delete -f k8s/test.nginx.yaml
+
+  # Migrate the project database
+  migrate:
+    # Ensure all tests are success
+    needs: [test-django, test-nginx]
+
+    runs-on: maptocanada-yeti2
+
+    steps:
+      - name: Download version.txt
+        uses: actions/download-artifact@v2
+        with:
+          name: deployment
+  
+      - name: Set image version
+        id: vars
+        run: echo ::set-output name=tag::$(cat version.txt)
+        
+      - uses: actions/checkout@v2
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+          
+      - name: Check image version
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $IMAGE_TAG
+
+      - name: Migrate the project database
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/migrate.yaml
+          kubectl delete -f k8s/migrate.yaml || echo "Database migration job is not exists"
+          kubectl apply -f k8s/migrate.yaml
+          kubectl wait --timeout=60s --for=condition=complete jobs/maptocanada-db-migrate
+          kubectl logs -f jobs/maptocanada-db-migrate
+          kubectl delete -f k8s/migrate.yaml
+
+  # Deploy to k8s
+  deploy:
+    # Ensure database already migrated
+    needs: migrate
+
+    runs-on: maptocanada-yeti2
+
+    steps:
+      - name: Download version.txt
+        uses: actions/download-artifact@v2
+        with:
+          name: deployment
+  
+      - name: Set image version
+        id: vars
+        run: echo ::set-output name=tag::$(cat version.txt)
+        
+      - uses: actions/checkout@v2
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+          
+      - name: Check image version
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $IMAGE_TAG
+
+      - name: Migrate the project database
+        env:
+          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/deployment.django.yaml
+          sed -i "s@__DATA_PATH__@$MAPTOCANADA_DATA@g" k8s/deployment.django.yaml
+          sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/deployment.frontend.yaml
+          kubectl apply -f k8s/deployment.django.yaml
+          kubectl apply -f k8s/deployment.nginx.yaml
+          kubectl apply -f k8s/clusterissuer.yaml
+          kubectl apply -f k8s/service.nginx.yaml
+          kubectl apply -f k8s/service.django.yaml
+          kubectl apply -f k8s/ingress.yaml
