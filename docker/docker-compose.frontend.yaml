@@ -9,4 +9,4 @@ services:
         - api_host=
         - api_prefix=
         - path_prefix=
-    image: maptocanada/frontend:__COMMIT_TAG__
+    image: __IMAGE_NAME_NGINX__:__COMMIT_TAG__

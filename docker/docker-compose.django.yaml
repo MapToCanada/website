@@ -7,4 +7,4 @@ services:
       dockerfile: Dockerfile.django
       args:
         - PROJECT_PATH=/maptocanada
-    image: maptocanada/django:__COMMIT_TAG__
+    image: __IMAGE_NAME_DJANGO__:__COMMIT_TAG__
