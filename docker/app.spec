@@ -18,7 +18,6 @@ added_files = [
   ('maptocanada', 'maptocanada'),
   ('portal', 'portal'),
   ('fonts', 'fonts'),
-  ('templates', 'templates'),
 ]
 
 hide_imports = [
