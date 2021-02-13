@@ -1,0 +1,65 @@
+name: MapToCanada-CI-CD
+
+on:
+  push:
+    # Publish `v1.2.3` tags as releases.
+    tags:
+      - v*
+
+  # Run tests for any PRs.
+  pull_request:
+
+env:
+  # Define image names
+  IMAGE_NAME_DJANGO: map2canada/django
+  IMAGE_NAME_NGINX: map2canada/nginx
+
+jobs:
+  # Apply configmap to Kubernetes
+  config:
+    runs-on: maptocanada-yeti2
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Apply configmap
+        run: |
+          kubectl apply -f k8s/configmap.yaml
+          
+      - name: Set output
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+        
+      - name: Check output
+        run: |
+          echo ${{ steps.vars.outputs.tag }}
+
+  # Build and push image to Docker registry.
+  build-django:
+    # Ensure config job passes before building image.
+    needs: config
+
+    runs-on: maptocanada-yeti2
+
+    steps:
+      - uses: actions/checkout@v2
+        env:
+          IMAGE_TAG: ${{ jobs.config.steps.vars.outputs.tag }}
+
+      - name: Build Django image
+        run: |
+          cp docker/.dockerignore ./
+          
+          cp docker/Dockerfile.django ./
+          cp docker/docker-compose.django.yaml ./
+          cp docker/app.py ./
+          cp docker/app.spec ./
+          
+          echo $IMAGE_TAG
+          sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" docker-compose.django.yaml
+          sed -i "s@__IMAGE_NAME_DJANGO__@$IMAGE_NAME_DJANGO@g" docker-compose.django.yaml
+          docker-compose -f docker-compose.django.yaml build
+
+      - name: Push image
+        run: |
+          docker push $IMAGE_NAME_DJANGO:$IMAGE_TAG
