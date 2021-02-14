@@ -3,7 +3,7 @@ import React from "react";
 const index = () => {
     return (
         <div>
-            About
+            Telegram: https://t.me/map2canada
         </div>
     );
 };

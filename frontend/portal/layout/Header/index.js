@@ -30,11 +30,11 @@ const index = () => {
         <Menu.Item key="home">
           <Link to={urls.HOME}>首页</Link>
         </Menu.Item>
+        <Menu.Item key="faq">
+          <Link to={urls.FAQ}>FAQ</Link>
+        </Menu.Item>
         <Menu.Item key="about">
           <Link to={urls.ABOUT}>关于</Link>
-        </Menu.Item>
-        <Menu.Item key="faq">
-          <Link to={urls.ABOUT}>FAQ</Link>
         </Menu.Item>
         { login.loggedIn && 
           <Menu.Item key="profile">
