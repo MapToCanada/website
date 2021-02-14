@@ -11,6 +11,7 @@ import TopButton from "./layout/TopButton";
 import Home from "./app/Home";
 import SignIn from "./app/Login";
 import About from "./app/About";
+import Faq from "./app/Faq";
 
 import { authToken } from "@portal/store/reducers/login";
 
@@ -31,6 +32,7 @@ class App extends React.Component {
           <Route exact path={urls.HOME} render={(p) => <Home {...p} />} />
           <Route exact path={urls.SIGN_IN} render={(p) => <SignIn {...p} />} />
           <Route exact path={urls.ABOUT} render={(p) => <About {...p} />} />
+          <Route exact path={urls.FAQ} render={(p) => <Faq {...p} />} />
         </Switch>
         <Footer />
         <TopButton />

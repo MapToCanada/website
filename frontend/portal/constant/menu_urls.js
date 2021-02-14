@@ -10,6 +10,7 @@ export const ADMIN = BASE_PATH + "/admin";
 
 export const HOME = PORTAL_PREFIX + "/";
 export const ABOUT = PORTAL_PREFIX + "/about";
+export const FAQ = PORTAL_PREFIX + "/faq";
 export const PROFILE = PORTAL_PREFIX + "/profile";
 export const SIGN_IN = PORTAL_PREFIX + "/signin";
 export const SIGN_OUT = PORTAL_PREFIX + "/signout";
