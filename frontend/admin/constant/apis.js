@@ -1,15 +1,9 @@
-const apiServer = API_HOST;
-const apiPrefix = API_PREFIX;
-
-export const BASE_URL = apiServer;
-export const PREFIX = apiPrefix;
-
 export const LANGUAGE_CODE =
   location.pathname.indexOf("/zh-hans/") !== -1 ? "zh-hans" : "en-us";
 
-const languagePrefix = BASE_URL + "/" + LANGUAGE_CODE;
-const langApiPrefix = languagePrefix + PREFIX;
-const basePrefix = BASE_URL + PREFIX;
+const languagePrefix = "/" + LANGUAGE_CODE;
+const langApiPrefix = languagePrefix + API_PREFIX;
+const basePrefix = API_PREFIX;
 
 export const USER_VALIDATE = langApiPrefix + "/account/validate/"
 

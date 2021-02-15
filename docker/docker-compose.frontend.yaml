@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
       args:
-        - api_host=
+        - api_host=/backend
         - api_prefix=
         - path_prefix=
     image: __IMAGE_NAME_NGINX__:__COMMIT_TAG__

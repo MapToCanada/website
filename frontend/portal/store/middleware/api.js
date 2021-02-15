@@ -1,6 +1,5 @@
 import axios from "axios";
 import * as actions from "../api";
-import { BASE_URL } from "@portal/constant/apis";
 
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
@@ -37,7 +36,7 @@ const api = ({ dispatch }) => (next) => async (action) => {
 
   try {
     const response = await axios.request({
-      baseURL: BASE_URL,
+      baseURL: API_HOST,
       url,
       headers,
       method,
