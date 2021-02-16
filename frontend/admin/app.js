@@ -2,11 +2,11 @@ import "antd/dist/antd.less";
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { connect } from "react-redux";
-import { authToken } from "@portal/store/reducers/login";
+import { authToken } from "@admin/store/reducers/login";
 import * as urls from "@admin/constant/menu_urls.js";
 
 // Layout
-import { Layout, Spin } from "antd";
+import { Layout, Spin, Alert } from "antd";
 import AdminHeader from "./layout/Header";
 import TopButton from "./layout/TopButton";
 import styles from "./index.less";
@@ -20,23 +20,63 @@ const { Header, Content } = Layout;
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      counter: 5
+    }
   }
 
   componentDidMount() {
     this.props.authToken()
   }
 
+  componentDidUpdate() {
+    if (this.props.loggedIn === false || this.props.isStaff === false) {
+      if (this.timer){
+        return;
+      }
+
+      this.timer = setInterval(() => {
+        this.setState({counter: this.state.counter - 1})
+        if(this.state.counter <= 0){
+          clearInterval(this.timer);
+          window.location.href = urls.PORTAL;
+        }
+      }, 1000)
+    }
+  }
+
+  getAlertText(counter){
+    let tail = counter == 1 ? "second" : "seconds";
+    if(counter > 0)
+      return "Back to homepage in " + counter + " " + tail;
+    
+    return "Redirecting...";
+  }
+
   render() {
-    if(this.props.loading !== false){
+    if (this.props.loading !== false) {
       return (
         <div className={styles.appLoading}>
-          <div className={styles.spin}><Spin /></div>
+          <div className={styles.spin}>
+            <Spin />
+          </div>
         </div>
-      )
+      );
     }
 
-    if(this.props.loggedIn === false && this.props.isStaff === false){
-      window.location.href = urls.PORTAL;
+    if (this.props.loggedIn !== true || this.props.isStaff !== true) {
+      const { counter } = this.state;
+      return (
+        <div className={styles.appLoading}>
+          <div className={styles.spin}>
+            <Alert
+              message="Please login as staff"
+              description={this.getAlertText(counter)}
+              type="error"
+            />
+          </div>
+        </div>
+      );
     }
 
     return (

@@ -1,7 +1,7 @@
 export const BASE_PATH = PATH_PREFIX || "";
 
 export const ADMIN_PREFIX = BASE_PATH + "/admin";
-export const PORTAL = BASE_PATH + NODE_ENV && NODE_ENV == "production" ? "" : "/";
+export const PORTAL = BASE_PATH + NODE_ENV && NODE_ENV == "production" ? "/" : "/";
 
 export const HOME = ADMIN_PREFIX + "/";
 
