@@ -31,7 +31,8 @@ urlpatterns += i18n_patterns(
     path('account/', include('account.urls')),
     path('api/account/', include('account.urls')),
     path('api/account/', include(accountRouter.urls)),
-    path(r'', include('portal.urls')),
+    path('api/archive/', include('archive.urls')),
+    path(r'api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     prefix_default_language=True
 )
 

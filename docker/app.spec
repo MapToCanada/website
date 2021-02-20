@@ -14,8 +14,9 @@ added_files = [
   (os.path.join(local_lib, 'itsdangerous'), 'itsdangerous'),
   (os.path.join(local_lib, 'uvicorn'), 'uvicorn'),
   (os.path.join(local_lib, 'h11'), 'h11'),
-  ('account', 'account'),
   ('maptocanada', 'maptocanada'),
+  ('account', 'account'),
+  ('archive', 'archive'),
   ('portal', 'portal'),
   ('fonts', 'fonts'),
 ]
@@ -32,6 +33,7 @@ hide_imports = [
 
   "maptocanada",
   "account",
+  "archive",
   "portal",
 ]
 
