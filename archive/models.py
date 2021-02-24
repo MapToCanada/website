@@ -33,6 +33,7 @@ class Archive(models.Model):
     hit_count = models.IntegerField('点击量', default=0)
     source = models.TextField(max_length=5000, null=True, blank=True)
     thumb = models.CharField('缩略图', max_length=128, blank=True, null=True)
+    is_deleted = models.BooleanField('Deleted', default=False)
     category = models.ManyToManyField(Category, related_name='category', through='ArchiveCategory', blank=True)
 
     def save(self, *args, **kwargs):
