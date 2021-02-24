@@ -84,9 +84,11 @@ class ArchiveCategoryViewSet(viewsets.ModelViewSet):
 
 
 class ArchiveViewSet(viewsets.ModelViewSet):
-    queryset = Archive.objects.all().order_by('-ts_created')
     serializer_class = ArchiveSerializer
     pagination_class = MyPageNumberPagination
+
+    def get_queryset(self):
+        return Archive.objects.filter(is_deleted=False).all().order_by('-ts_created')
     
     def create(self, request, *args, **kwargs):
         data = request.data
