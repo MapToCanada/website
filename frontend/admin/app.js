@@ -26,7 +26,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.props.authToken()
+    this.props.authToken();
   }
 
   componentDidUpdate() {
@@ -86,12 +86,16 @@ class App extends React.Component {
             <AdminHeader />
           </Header>
           <Layout>
-          <Content className={styles.siteLayoutContent}>
-            <Switch>
-              <Route exact path={urls.HOME} render={(p) => <AdminHome {...p} />} />
-              <Route path={urls.ARTICLE} render={(p) => <Article {...p} />} />
-            </Switch>
-          </Content>
+            <Content className={styles.siteLayoutContent}>
+              <Switch>
+                <Route
+                  exact
+                  path={urls.HOME}
+                  render={(p) => <AdminHome {...p} />}
+                />
+                <Route path={urls.ARTICLE} render={(p) => <Article {...p} />} />
+              </Switch>
+            </Content>
           </Layout>
         </BrowserRouter>
         <TopButton />
