@@ -8,6 +8,7 @@ import {
   OrderedListOutlined,
   PlusOutlined,
   AppstoreOutlined,
+  RestOutlined,
 } from "@ant-design/icons";
 const { Content, Sider } = Layout;
 
@@ -31,6 +32,9 @@ const home = () => {
           <Menu.Item key="category" icon={<AppstoreOutlined />}>
             <Link to={urls.CATEGORY}>Category</Link>
           </Menu.Item>
+          <Menu.Item key="trash" icon={<RestOutlined />}>
+            <Link to={urls.ARTICLE_TRASH}>Trash</Link>
+          </Menu.Item>
         </Menu>
       </Sider>
       <Layout style={{ padding: "0 24px 24px" }}>
@@ -44,6 +48,7 @@ const home = () => {
         >
           <Switch>
             <Route exact path={urls.ARTICLE_LIST} render={() => <List />} />
+            <Route exact path={urls.ARTICLE_TRASH} render={(props) => <List {...props} type="trash" />} />
             <Route exact path={urls.ARTICLE_NEW} render={(props) => <ArticleAdd {...props} />}/>
             <Route exact path={urls.CATEGORY} render={() => <Category />} />
             <Route exact path={urls.ARTICLE_EDIT} render={(props) => (<ArticleEdit {...props} />)}

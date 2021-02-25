@@ -1,10 +1,11 @@
 import request from "@admin/utils/request";
 import { API_ARCHIVE } from "@admin/constant/apis.js";
 
-export const del = async (id) => {
+export const del = async (id, params = {}) => {
   return await request({
     url: API_ARCHIVE + id + "/",
     method: "DELETE",
+    params
   });
 };
 
