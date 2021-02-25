@@ -88,7 +88,11 @@ class ArchiveViewSet(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
 
     def get_queryset(self):
-        return Archive.objects.filter(is_deleted=False).all().order_by('-ts_created')
+        type = self.request.query_params.get('type', None)
+        show_deleted = False
+        if type == "trash":
+            show_deleted = True
+        return Archive.objects.filter(is_deleted=show_deleted).all().order_by('-ts_created')
     
     def create(self, request, *args, **kwargs):
         data = request.data
@@ -114,7 +118,11 @@ class ArchiveViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.is_publish = False
+        print(instance.is_deleted)
+        if instance.is_deleted == True:
+            instance.delete()
+            return Response({'id': instance.id}, status=HTTP_200_OK)
+        instance.is_deleted = True
         self.perform_update(instance)
         return Response({'id': instance.id}, status=HTTP_200_OK)
 

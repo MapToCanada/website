@@ -7,7 +7,11 @@ import * as urls from "@admin/constant/menu_urls";
 
 // UI
 import { List, Space, Popconfirm, message } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  RetweetOutlined,
+} from "@ant-design/icons";
 
 // Reducer
 import { fetch } from "@admin/store/reducers/archive";
@@ -30,6 +34,7 @@ class ArticleList extends React.Component {
     this.state = {
       page: 1,
       loading: false,
+      type: null,
     };
   }
 
@@ -37,16 +42,89 @@ class ArticleList extends React.Component {
     this.props.fetch({ page: 1, pageSize });
   }
 
+  componentDidUpdate = (prevProps) => {
+    if (this.props.type != prevProps.type) {
+      const type = this.props.type == "trash" ? "trash" : null;
+      this.props.fetch({ page: 1, pageSize, type });
+      this.setState({ type });
+    }
+  };
+
   delete = async (id) => {
+    const { type } = this.state;
     this.setState({ loading: true });
-    const result = await del(id);
+    const result = await del(id, {type});
     this.setState({ loading: false });
     if (result !== false) message.success("Archive deleted!");
-    this.props.fetch({ page: 1, pageSize });
+    this.props.fetch({ page: 1, pageSize, type });
+  };
+
+  putBack = async (id) => {
+    console.log(id);
+  };
+
+  itemActions = (item) => {
+    if (this.props.type && this.props.type == "trash") {
+      return [
+        <Popconfirm
+          title="Are you sure to put this archive back?"
+          onConfirm={() => this.putBack(item.id)}
+          okText="Yes"
+          cancelText="No"
+          key={"list-put-back-button-" + item.id}
+        >
+          <IconText
+            icon={RetweetOutlined}
+            text="Put back"
+            key="list-vertical-star-o"
+          />
+        </Popconfirm>,
+        <Popconfirm
+          title="Are you sure to delete this archive as Permanent?"
+          onConfirm={() => this.delete(item.id)}
+          okText="Yes"
+          cancelText="No"
+          key={"list-delete-button-" + item.id}
+        >
+          <a href="#">
+            <IconText
+              icon={DeleteOutlined}
+              text="Delete Permanent"
+              key="list-vertical-star-o"
+            />
+          </a>
+        </Popconfirm>,
+      ];
+    }
+
+    return [
+      <Link
+        to={urls.ARTICLE_EDIT_INSTANCE(item.id)}
+        key={"edit-link-" + item.id}
+      >
+        <IconText icon={EditOutlined} text="Edit" key="list-vertical-like-o" />
+      </Link>,
+      <Popconfirm
+        title="Are you sure to delete this archive?"
+        onConfirm={() => this.delete(item.id)}
+        okText="Yes"
+        cancelText="No"
+        key={"list-delete-button-" + item.id}
+      >
+        <a href="#">
+          <IconText
+            icon={DeleteOutlined}
+            text="Delete"
+            key="list-vertical-star-o"
+          />
+        </a>
+      </Popconfirm>,
+    ];
   };
 
   render() {
     const { loading, archives, fetch } = this.props;
+    const { type } = this.state;
 
     const dataSource =
       archives && archives.results && archives.results.length > 0
@@ -62,7 +140,7 @@ class ArticleList extends React.Component {
           pagination={{
             total: archives && archives.count,
             onChange: (page) => {
-              fetch({ page, pageSize });
+              fetch({ page, pageSize, type });
               this.setState({ page });
             },
             pageSize,
@@ -71,30 +149,7 @@ class ArticleList extends React.Component {
           renderItem={(item) => (
             <List.Item
               key={item.title}
-              actions={[
-                <Link to={urls.ARTICLE_EDIT_INSTANCE(item.id)} key={"edit-link-" + item.id}>
-                  <IconText
-                    icon={EditOutlined}
-                    text="Edit"
-                    key="list-vertical-like-o"
-                  />
-                </Link>,
-                <Popconfirm
-                  title="Are you sure to delete this archive?"
-                  onConfirm={() => this.delete(item.id)}
-                  okText="Yes"
-                  cancelText="No"
-                  key={"list-delete-button-" + item.id}
-                >
-                  <a href="#">
-                    <IconText
-                      icon={DeleteOutlined}
-                      text="Delete"
-                      key="list-vertical-star-o"
-                    />
-                  </a>
-                </Popconfirm>,
-              ]}
+              actions={this.itemActions(item)}
               extra={
                 <img
                   width={272}

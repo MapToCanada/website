@@ -1,52 +1,46 @@
 import React from "react";
-import { connect } from "react-redux";
 
 // Constant
-import * as urls from "@admin/constant/menu_urls";
+import { ARTICLE_EDIT_INSTANCE } from "@admin/constant/menu_urls";
 
 // UI and Form
 import { message } from "antd";
 import ArticleForm from "./ArticleForm";
 
-// Reducer
-import { create } from "@admin/store/reducers/archive";
+import { create } from "./ajax";
 
 class ArticleAdd extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { loading: false };
   }
 
-  handleFinish = (values) => {
-    this.props.create(values);
-  }
+  handleFinish = async (values) => {
+    this.setState({ loading: true });
+    const result = await create(values);
+    this.setState({ loading: false });
 
-  componentDidUpdate = () => {
-    if(!this.props.message) return;
-    const result = this.props.message;
-    if(result.status == 0 || result.aid < 0){
+    if (result.status == 0 || result.aid < 0) {
       message.error("Archive already exists. (Error: same title)");
+      return;
     }
     message.success("Article Created");
-    this.props.history.push(urls.ARTICLE_EDIT_INSTANCE(result.aid))
-  }
+    this.props.history.push(ARTICLE_EDIT_INSTANCE(result.aid));
+  };
 
   render() {
     return (
       <div>
-        <ArticleForm onFinish={this.handleFinish} />
+        <ArticleForm
+          onFinish={this.handleFinish}
+          submitButtonProps={{
+            loading: this.state.loading,
+            disabled: this.state.loading,
+          }}
+        />
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => ({
-  status: state.entity.archive.detailStatus,
-  message: state.entity.archive.message,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  create: (payload) => dispatch(create(payload)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ArticleAdd);
+export default ArticleAdd;
