@@ -16,9 +16,10 @@ added_files = [
   (os.path.join(local_lib, 'h11'), 'h11'),
   ('maptocanada', 'maptocanada'),
   ('account', 'account'),
+  ('attachment', 'attachment'),
   ('archive', 'archive'),
   ('portal', 'portal'),
-  ('fonts', 'fonts'),
+  ('resources', 'resources'),
 ]
 
 hide_imports = [
@@ -33,6 +34,7 @@ hide_imports = [
 
   "maptocanada",
   "account",
+  "attachment",
   "archive",
   "portal",
 ]

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 // Constant
 import * as urls from "@admin/constant/menu_urls";
+import { API_IMAGE } from "@admin/constant/apis";
 
 // UI
 import { List, Space, Popconfirm, message } from "antd";
@@ -53,7 +54,7 @@ class ArticleList extends React.Component {
   delete = async (id) => {
     const { type } = this.state;
     this.setState({ loading: true });
-    const result = await del(id, {type});
+    const result = await del(id, { type });
     this.setState({ loading: false });
     if (result !== false) message.success("Archive deleted!");
     this.props.fetch({ page: 1, pageSize, type });
@@ -154,7 +155,11 @@ class ArticleList extends React.Component {
                 <img
                   width={272}
                   alt="logo"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+                  src={
+                    (item.thumb == null &&
+                      "https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png") ||
+                    API_IMAGE(item.thumb, 270, 160)
+                  }
                 />
               }
             >

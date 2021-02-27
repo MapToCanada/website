@@ -15,8 +15,9 @@ export const API_CATEGORY = langApiPrefix + "/archive/category/"
 export const API_ARCHIVE = langApiPrefix + "/archive/archives/"
 
 // Attachment
-export const API_UPLOAD = langApiPrefix + "/attachment/upload/"
-export const API_IMAGE = (name, w, h) => basePrefix + `/attachment/image/${name}/${w}/${h}/`
+export const API_UPLOAD = API_HOST + basePrefix + "/attachment/upload/"
+export const API_IMAGE = (name, w, h) => API_HOST + basePrefix + `/attachment/image/${name}/${w}/${h}/`
 export const MEDIA_STATIC = (name) => `/media/${name}`
-export const API_AVATAR_UPLOAD = basePrefix + "/attachment/upload-avatar"
-export const API_AVATAR = (path, size) => basePrefix + `/attachment/avatar/${path}/${size}/`
+export const API_AVATAR_UPLOAD = API_HOST + basePrefix + "/attachment/upload-avatar"
+export const API_AVATAR = (path, size) => API_HOST + basePrefix + `/attachment/avatar/${path}/${size}/`
+export const API_MEDIAS = basePrefix + "/attachment/media/"
