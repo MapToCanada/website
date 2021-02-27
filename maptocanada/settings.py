@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'portal',
     'account',
     'archive',
+    'attachment',
 ]
 
 MIDDLEWARE = [
@@ -168,7 +169,7 @@ ATTACHMENTS_MEDIA = os.path.join(ATTACHMENTS_PATH, 'media')
 MEDIA_ROOT = ATTACHMENTS_MEDIA
 
 # For account app
-FONT_FILE = "fonts/Geneva.dfont"
+FONT_FILE = "resources/fonts/Geneva.dfont"
 ERROR_ACCOUNT_USERNAME = ['username', 'user', 'name', 'password', 'passwd', 'null', 'none', 'blank', 'true', 'false',
                           'drop', 'delete', 'update', 'create', 'alert', 'admin', 'root']
 
@@ -201,6 +202,7 @@ LOGGING = {
     },
 }
 
+# Django Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
@@ -216,3 +218,26 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAdminUser',
     ],
 }
+
+# Attachments
+MEDIA_URL = '/media/'
+MEDIA_IMAGES_URL = 'images/'
+MEDIA_VIDEO_URL = 'videos/'
+MEDIA_AUDIO_URL = 'audios/'
+MEDIA_OTHER_URL = 'others/'
+
+ATTACHMENTS_PATH = os.path.join(DATA_DIR, 'attachments')
+ATTACHMENTS_MEDIA = os.path.join(ATTACHMENTS_PATH, 'media')
+
+ATTACHMENTS_MEDIA_IMAGES = os.path.join(ATTACHMENTS_PATH, 'media', 'images')
+ATTACHMENTS_MEDIA_VIDEOS = os.path.join(ATTACHMENTS_PATH, 'media', 'videos')
+ATTACHMENTS_MEDIA_AUDIOS = os.path.join(ATTACHMENTS_PATH, 'media', 'audios')
+ATTACHMENTS_MEDIA_OTHERS = os.path.join(ATTACHMENTS_PATH, 'media', 'others')
+AVATAR_PATH = os.path.join(ATTACHMENTS_PATH, 'avatar')
+
+# For thumbnail and cache, don't need to backup
+IMAGE_CACHE_PATH = os.path.join(ATTACHMENTS_PATH, 'cache')
+
+# Save no-thumb.png to the resources and the static dir, both of them.
+NO_THUMBNAIL_IMAGE = os.path.join(BASE_DIR, 'resources', 'images', 'no-thumb.png')
+NO_THUMBNAIL_URL = '/static/images/no-thumb.png'

@@ -15,6 +15,7 @@ Pillow = "*"
 coverage = "*"
 uvicorn = "*"
 django-cors-headers = "*"
+django = "==3.1.7"
 
 [dev-packages]
 pep8 = "*"

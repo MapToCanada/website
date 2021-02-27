@@ -6,22 +6,22 @@ services:
     ports:
       - "0.0.0.0:5432:5432"
     volumes:
-      - ./tmp/db:/var/lib/postgresql/data
-    env_file: .env
+      - ../tmp/db:/var/lib/postgresql/data
+    env_file: ../.env
   backend:
     image: freeyeti/dev-in-docker:python3-gis
-    env_file: .env
+    env_file: ../.env
     ports:
       - "0.0.0.0:8000:8000"
     volumes:
-      - .:/code
-      - ./tmp/data:/data
+      - ../:/code
+      - ../tmp/data:/data
     depends_on:
       - postgis
   frontend:
     image: freeyeti/dev-in-docker:node-12-yarn-2
-    env_file: .env
+    env_file: ../.env
     ports:
       - "0.0.0.0:9000:9000"
     volumes:
-      - .:/code
+      - ../:/code

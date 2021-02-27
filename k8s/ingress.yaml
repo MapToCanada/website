@@ -12,6 +12,7 @@ spec:
   tls:
     - hosts:
         - maptocanada.ca
+        - backend.maptocanada.ca
       secretName: maptocanada-private-key
   rules:
     - host: maptocanada.ca
@@ -25,6 +26,16 @@ spec:
                 port:
                   number: 80
           - path: /backend
+            pathType: Prefix
+            backend:
+              service:
+                name: maptocanada-django
+                port:
+                  number: 8000
+    - host: backend.maptocanada.ca
+      http:
+        paths:
+          - path: /
             pathType: Prefix
             backend:
               service:

@@ -19,8 +19,13 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from account.urls import router as accountRouter
+from attachment.urls import router as attachmentRouter
 
-urlpatterns = []
+urlpatterns = [
+    path('attachment/', include('attachment.urls', namespace="views")),
+    path('api/attachment/', include('attachment.urls', namespace="api")),
+    path('api/attachment/', include(attachmentRouter.urls)),
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
@@ -35,4 +40,3 @@ urlpatterns += i18n_patterns(
     path(r'api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     prefix_default_language=True
 )
-

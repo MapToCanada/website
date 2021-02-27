@@ -42,13 +42,6 @@ const slice = createSlice({
       state.archive =null;
     },
 
-    // Create request succeed
-    creatingSucceed: (state, action) => {
-      state.loading = false;
-      state.status = "success";
-      state.message = action.payload;
-    }, // success
-
     // Fetch archives list succeed
     fetchSucceed: (state, action) => {
       state.loading = false;
@@ -79,7 +72,6 @@ export const {
   requestFailed,
   reset,
 
-  creatingSucceed,
   fetchSucceed,
 
   archiveRequested,
@@ -92,19 +84,6 @@ export const {
 } = slice.actions;
 
 export default slice.reducer;
-
-export const create = (data) => (dispatch) => {
-  return dispatch(
-    apiCallBegan({
-      url: API_ARCHIVE,
-      method: "POST",
-      data: data,
-      onStart: requested.type,
-      onSuccess: creatingSucceed.type,
-      onError: requestFailed.type,
-    })
-  );
-};
 
 export const fetch = (data) => (dispatch) => {
   return dispatch(

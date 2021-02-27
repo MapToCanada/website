@@ -11,20 +11,24 @@ import {
   Switch,
   DatePicker,
   Button,
-  // Upload,
-  // message,
+  Divider,
 } from "antd";
-// import { UploadOutlined } from "@ant-design/icons";
 const { Option } = Select;
+
+import ThumbnailUploader from "./Thumbnail";
 
 // Reducers
 import { fetchCategories } from "@admin/store/reducers/category";
+
+// Style
+import styles from "./index.less";
 
 class ArticleForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       data: null,
+      thumbnail: null,
     };
     this.form = React.createRef();
   }
@@ -34,30 +38,56 @@ class ArticleForm extends React.Component {
 
     fetchCategories({ pageSize: 50 });
 
-    if (initialValues == null) return;
-
-    const formData = {
-      ...initialValues,
-      ts_publish: moment(initialValues["ts_publish"]),
-      category: initialValues["category"].map((c) => c.id),
-    };
+    let formData = {}
+    if (initialValues == null) {
+      // Create new archive
+      formData = {
+        language: "zh-hans",
+        ts_publish: moment(),
+        is_publish: true,
+        home_push: true,
+      }
+    }else{
+      // Edit exists archive
+      formData = {
+        ...initialValues,
+        ts_publish: moment(initialValues["ts_publish"]),
+        category: initialValues["category"].map((c) => c.id),
+      };
+    }
     this.form.current.setFieldsValue(formData);
-    this.setState({ data: formData });
+    let state = { data: formData };
+    if(initialValues && initialValues.thumb !== null){
+      state["thumbnail"] = initialValues.thumb;
+    }
+    this.setState(state);
   };
+  
+  setThumbnail = (image) => {
+    this.setState({thumbnail: image});
+  }
+
+  handleFinish = (values) => {
+    const { onFinish } = this.props;
+    if(this.state.thumbnail !== null){
+      values.thumb = this.state.thumbnail;
+    }
+    onFinish(values);
+  }
 
   render() {
-    const { loading, categories, onFinish } = this.props;
+    const { loading, categories } = this.props;
 
     return (
       <div>
-        <Form ref={this.form} layout="vertical" onFinish={onFinish}>
+        <Form ref={this.form} layout="vertical" onFinish={this.handleFinish}>
           <Form.Item label="Language" name="language">
             <Radio.Group>
               <Radio value="en-us">English</Radio>
               <Radio value="zh-hans">简体中文</Radio>
             </Radio.Group>
           </Form.Item>
-          <Form.Item label="Title" name="title">
+          <Form.Item label="Title" name="title" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item label="Link" name="link">
@@ -95,11 +125,11 @@ class ArticleForm extends React.Component {
                 ))}
             </Select>
           </Form.Item>
-          {/* <Form.Item label="Thumbnail" name="thumb">
-        <Upload name="logo" action="/upload.do" listType="picture">
-          <Button icon={<UploadOutlined />}>Click to upload</Button>
-        </Upload>
-            </Form.Item> */}
+          <div className={styles.thumbItem}>
+            <div>Thumbnail</div>
+            <div><ThumbnailUploader defaultValue={this.state.thumbnail} onThumbnailChanged={this.setThumbnail} /></div>
+          </div>
+          <Divider dashed />
           <Form.Item>
             <Button type="primary" htmlType="submit" {...this.props.submitButtonProps}>
               Submit

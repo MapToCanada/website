@@ -41,12 +41,11 @@ class CategoryViewSet(viewsets.ModelViewSet):
                 category_field['is_pub'] = True
             if category_field['is_pub'] == 'false':
                 category_field['is_pub'] == False
-        
+
             create_category = Category.objects.create(**category_field)
             # result = CategorySerializer(create_category)
             status = 1
         return Response({'status': status}, status=HTTP_201_CREATED)
-
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -71,12 +70,11 @@ class CategoryViewSet(viewsets.ModelViewSet):
                 'code': data['code'],
                 'is_pub': data['is_pub'],
             }
-            
+    
             update_category = category.update(**category_field)
             status = 1
-            
-            
         return Response({'status': status})
+
 
 class ArchiveCategoryViewSet(viewsets.ModelViewSet):
     queryset = ArchiveCategory.objects.all()
@@ -97,24 +95,26 @@ class ArchiveViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = request.data
         data['user'] = request.auth.user.id
+
         if Archive.objects.filter(title=data['title']).exists():
             status = 0
+            archive_id = -1
         else:
             serializer = self.get_serializer(data=data)
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             status = 1
+            archive_id = serializer.data['id']
             if 'category' in data.keys():
                 for c_id in data['category']:
                     category = Category.objects.get(id=c_id)
-                    archive_id = serializer.data['id']
                     archive = Archive.objects.get(id=archive_id)
                     archive_category = {
                         'aid': archive,
                         'cid': category
                     }
                     ArchiveCategory.objects.create(**archive_category)
-        return Response({'status': status}, status=HTTP_201_CREATED)
+        return Response({'status': status, 'aid': archive_id}, status=HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
