@@ -26,6 +26,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: maptocanada-env-config
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: maptocanada.settings_online_dev
           ports:
             - containerPort: 80
           volumeMounts:
