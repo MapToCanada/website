@@ -39,6 +39,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: maptocanada-django
+                name: maptocanada-dev-backend
                 port:
                   number: 8000
