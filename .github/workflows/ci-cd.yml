@@ -327,6 +327,8 @@ jobs:
           kubectl apply -f k8s/service.django.yaml
           kubectl apply -f k8s/deployment.frontend.yaml
           kubectl apply -f k8s/service.frontend.yaml
+          kubectl apply -f k8s/deployment.dev-backend.yaml
+          kubectl apply -f k8s/service.dev-backend.yaml
           kubectl apply -f k8s/clusterissuer.yaml
           kubectl apply -f k8s/ingress.yaml
 
