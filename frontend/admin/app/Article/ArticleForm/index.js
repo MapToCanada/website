@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import moment from "moment";
+import Editor from "rich-markdown-editor";
 
 // Antd UI
 import {
@@ -26,11 +27,17 @@ import styles from "./index.less";
 class ArticleForm extends React.Component {
   constructor(props) {
     super(props);
+    
+    // For form items
     this.state = {
       data: null,
       thumbnail: null,
+      loaded: false, // prevent Component update if props.initalValues changed
     };
     this.form = React.createRef();
+
+    // Don't save content in state
+    this.content = null;
   }
 
   componentDidMount = () => {
@@ -39,6 +46,7 @@ class ArticleForm extends React.Component {
     fetchCategories({ pageSize: 50 });
 
     let formData = {}
+
     if (initialValues == null) {
       // Create new archive
       formData = {
@@ -55,13 +63,22 @@ class ArticleForm extends React.Component {
         category: initialValues["category"].map((c) => c.id),
       };
     }
-    this.form.current.setFieldsValue(formData);
-    let state = { data: formData };
-    if(initialValues && initialValues.thumb !== null){
-      state["thumbnail"] = initialValues.thumb;
-    }
-    this.setState(state);
+
+    this.setState({
+      thumbnail: initialValues && initialValues.thumb !== null ? initialValues.thumb : null,
+      data: formData,
+    });
+
+    this.content = initialValues && initialValues.content ? initialValues.content : null;
   };
+
+  componentDidUpdate = () => {
+    const { data, loaded } = this.state;
+    if(data !== null && !loaded){
+      this.setState({ loaded: true });
+      this.form.current.setFieldsValue(data);
+    }
+  }
   
   setThumbnail = (image) => {
     this.setState({thumbnail: image});
@@ -72,12 +89,22 @@ class ArticleForm extends React.Component {
     if(this.state.thumbnail !== null){
       values.thumb = this.state.thumbnail;
     }
+    values.content = this.content;
     onFinish(values);
+  }
+
+  handleChange = (value) => {
+    this.content = value();
   }
 
   render() {
     const { loading, categories } = this.props;
+    const { data, thumbnail } = this.state;
 
+    const editorProps = {
+      onChange: this.handleChange
+    };
+    
     return (
       <div>
         <Form ref={this.form} layout="vertical" onFinish={this.handleFinish}>
@@ -96,9 +123,13 @@ class ArticleForm extends React.Component {
           <Form.Item label="Description" name="description">
             <Input.TextArea />
           </Form.Item>
-          <Form.Item label="Content" name="content">
-            <Input.TextArea />
-          </Form.Item>
+          <div className={styles.contentItem}>
+            <div>Content</div>
+            <div className={styles.contentEditor}>
+              {data && data.content && <Editor {...editorProps} defaultValue={data.content} />}
+              {data && !data.content && <Editor {...editorProps} defaultValue={"Write Markdown here!"} />}
+            </div>
+          </div>
           <Form.Item label="Publish" name="is_publish" valuePropName="checked">
             <Switch />
           </Form.Item>
@@ -127,7 +158,7 @@ class ArticleForm extends React.Component {
           </Form.Item>
           <div className={styles.thumbItem}>
             <div>Thumbnail</div>
-            <div><ThumbnailUploader defaultValue={this.state.thumbnail} onThumbnailChanged={this.setThumbnail} /></div>
+            <div><ThumbnailUploader defaultValue={thumbnail} onThumbnailChanged={this.setThumbnail} /></div>
           </div>
           <Divider dashed />
           <Form.Item>

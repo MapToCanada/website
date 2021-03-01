@@ -22,6 +22,10 @@ module.exports = {
       "@portal": path.resolve(__dirname, "../frontend/portal"),
       "@admin": path.resolve(__dirname, "../frontend/admin"),
     },
+    fallback: {
+      "punycode": false,
+      "assert": false,
+    },//fallback
   },
   optimization: {
     splitChunks: {

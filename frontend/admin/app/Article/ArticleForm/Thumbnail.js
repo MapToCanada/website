@@ -109,7 +109,6 @@ class Thumbnail extends React.Component {
       headers: {
         authorization: "Token " + token,
       },
-      withCredentials: true,
     };
 
     return (

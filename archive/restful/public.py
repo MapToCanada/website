@@ -28,7 +28,22 @@ class ArchiveViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = MyPageNumberPagination
 
     def get_queryset(self):
+        language = self.request.LANGUAGE_CODE
+
+        filter_kawgs = {
+            "language": language,
+            "is_deleted": False,
+            "is_publish": True
+        }
+
+        # Category
+        c = self.request.query_params.get('c', None)
+        if c is not None:
+            category = Category.objects.filter(code=c).first()
+            filter_kawgs["category"] = category
+
         # Keywords
         # k = self.request.query_params.get('k', None)
         # if k is not None:
-        return Archive.objects.filter(is_deleted=False, is_publish=True).all().order_by('-ts_created')
+
+        return Archive.objects.filter(**filter_kawgs).all().order_by('-ts_created')
