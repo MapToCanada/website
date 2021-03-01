@@ -170,7 +170,7 @@ class ArticleList extends React.Component {
                   </Link>
                 }
               />
-              {item.content}
+              {item.description}
             </List.Item>
           )}
         />

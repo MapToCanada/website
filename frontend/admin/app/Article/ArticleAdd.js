@@ -24,7 +24,6 @@ class ArticleAdd extends React.Component {
       message.error("Archive already exists. (Error: same title)");
       return;
     }
-
     message.success("Article Created");
     this.props.history.push(ARTICLE_EDIT_INSTANCE(result.aid));
   };

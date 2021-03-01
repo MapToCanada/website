@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { apiCallBegan } from "@admin/store/api.js";
 
 const slice = createSlice({
-  name: "archive",
+  name: "media",
   initialState: {
     // public status, fetching and deleting
     loading: null,

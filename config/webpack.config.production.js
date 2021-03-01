@@ -1,7 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   mode: "production",
@@ -21,6 +21,10 @@ module.exports = {
       "@portal": path.resolve(__dirname, "../frontend/portal"),
       "@admin": path.resolve(__dirname, "../frontend/admin"),
     },
+    fallback: {
+      punycode: false,
+      assert: false,
+    }, //fallback
   },
   optimization: {
     splitChunks: {
@@ -68,14 +72,14 @@ module.exports = {
               },
             },
           },
-        ]
+        ],
       }, // less -> css
 
       {
         test: /\.(png|jpg|gif)$/i,
         use: [
           {
-            loader: 'url-loader',
+            loader: "url-loader",
             options: {
               limit: 8192,
             },
