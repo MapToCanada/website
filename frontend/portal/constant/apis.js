@@ -1,5 +1,4 @@
-export const LANGUAGE_CODE =
-  location.pathname.indexOf("/zh-hans/") !== -1 ? "zh-hans" : "en-us";
+export const LANGUAGE_CODE = "zh-hans"; // TODO: Change the language by Cookie or SessionStorage
 
 const languagePrefix = "/" + LANGUAGE_CODE;
 const langApiPrefix = languagePrefix + API_PREFIX;
@@ -14,3 +13,5 @@ export const API_IMAGE = (name, w, h) => basePrefix + `/attachment/image/${name}
 export const MEDIA_STATIC = (name) => `/media/${name}`
 export const API_AVATAR_UPLOAD = basePrefix + "/attachment/upload-avatar"
 export const API_AVATAR = (path, size) => basePrefix + `/attachment/avatar/${path}/${size}/`
+
+export const API_ARCHIVES = langApiPrefix + "/archive/"
