@@ -17,6 +17,7 @@ module.exports = {
     chunkFilename: "[name].[id].js",
   }, // output
   resolve: {
+    extensions: [".js", ".jsx"],
     alias: {
       "@utils": path.resolve(__dirname, "../frontend/utils"),
       "@portal": path.resolve(__dirname, "../frontend/portal"),
