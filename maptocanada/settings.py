@@ -149,9 +149,9 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#static-root
 STATIC_ROOT = '/statics'
 
-# STATICFILES_DIRS = [
-#     "/statics"
-# ]
+STATICFILES_DIRS = [
+    "/resources"
+]
 
 # Django webpack loader (pipenv install django-webpack-loader)
 # WEBPACK_LOADER = {

@@ -15,6 +15,7 @@ ENV DJANGO_SETTINGS_MODULE "maptocanada.settings_build"
 
 RUN pipenv lock -r > requirements.txt \
     && pip3 install --no-cache-dir -r requirements.txt \
+    && python3 manage.py collectstatic \
     && pyinstaller app.spec
 
 FROM freeyeti/dev-in-docker:ubuntu20.04-gdal AS django
