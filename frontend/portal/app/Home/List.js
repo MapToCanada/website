@@ -31,7 +31,7 @@ class List extends Component {
         {archives &&
           archives.results &&
           archives.results.map((item) => (
-            <Row>
+            <Row key={"news-" + item.id}>
               <Col span={24} xs={24} sm={24}>
                 <h2>{item.title}</h2>
                 <p>{item.description}</p>
