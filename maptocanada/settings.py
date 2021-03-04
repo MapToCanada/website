@@ -150,7 +150,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = '/statics'
 
 STATICFILES_DIRS = [
-    "/resources"
+   os.path.join(BASE_DIR, "resources")
 ]
 
 # Django webpack loader (pipenv install django-webpack-loader)

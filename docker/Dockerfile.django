@@ -38,6 +38,7 @@ RUN mkdir -p /data
 
 COPY --from=backend /$PROJECT_PATH/dist/manage/ .
 COPY --from=backend /$PROJECT_PATH/dist/app/app ./app
+COPY --from=backend /statics /statics
 
 EXPOSE 8000
 VOLUME [ "/data" ]
