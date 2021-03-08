@@ -30,3 +30,11 @@ spec:
             limits:
               memory: 256Mi
               cpu: "0.1"
+          volumeMounts:
+            - name: www-data
+              mountPath: /data
+      volumes:
+        - name: www-data
+          hostPath:
+            path: __DATA_PATH__
+

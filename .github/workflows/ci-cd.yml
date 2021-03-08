@@ -325,6 +325,7 @@ jobs:
 
           sed -i "s@__COMMIT_TAG__@$IMAGE_TAG@g" k8s/deployment.frontend.yaml
           sed -i "s@__IMAGE_NAME_NGINX__@$IMAGE_NAME_NGINX@g" k8s/deployment.frontend.yaml
+          sed -i "s@__DATA_PATH__@$DATA_PATH@g" k8s/deployment.frontend.yaml
 
           kubectl apply -f k8s/deployment.frontend.yaml
           kubectl apply -f k8s/service.frontend.yaml
