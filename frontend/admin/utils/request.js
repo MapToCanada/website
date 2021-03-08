@@ -7,18 +7,22 @@ axios.defaults.withCredentials = true;
 
 const token = sessionStorage.getItem("token");
 
-const request = async ({url, method, data, params}) => {
-  let headers = {};
+const request = async ({url, method, data, params, headers}) => {
+  let requestHeaders = {};
 
   if (token) {
-    headers["Authorization"] = `Token ${token}`;
+    requestHeaders["Authorization"] = `Token ${token}`;
+  }
+
+  if(typeof(headers) == "object" && headers != null && headers != undefined){
+    requestHeaders = Object.assign(requestHeaders, headers);
   }
 
   try {
     const response = await axios.request({
       baseURL: API_HOST,
       url,
-      headers,
+      headers: requestHeaders,
       method,
       data,
       params,

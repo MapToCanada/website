@@ -5,6 +5,8 @@ installed packages:
 * rich-markdown-editor
 * markdown-it
 * react-is
+* prosemirror-state (For plugins)
+* prosemirror-view (For plugins)
 
 
 Peer dependencies:

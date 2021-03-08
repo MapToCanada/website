@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import moment from "moment";
-import Editor from "rich-markdown-editor";
 
 // Antd UI
 import {
@@ -14,9 +13,11 @@ import {
   Button,
   Divider,
 } from "antd";
+// import { PictureOutlined } from "@ant-design/icons";
 const { Option } = Select;
 
 import ThumbnailUploader from "./Thumbnail";
+import MarkdownEditor from "./MarkdownEditor";
 
 // Reducers
 import { fetchCategories } from "@admin/store/reducers/category";
@@ -27,7 +28,7 @@ import styles from "./index.less";
 class ArticleForm extends React.Component {
   constructor(props) {
     super(props);
-    
+
     // For form items
     this.state = {
       data: null,
@@ -45,7 +46,7 @@ class ArticleForm extends React.Component {
 
     fetchCategories({ pageSize: 50 });
 
-    let formData = {}
+    let formData = {};
 
     if (initialValues == null) {
       // Create new archive
@@ -54,8 +55,8 @@ class ArticleForm extends React.Component {
         ts_publish: moment(),
         is_publish: true,
         home_push: true,
-      }
-    }else{
+      };
+    } else {
       // Edit exists archive
       formData = {
         ...initialValues,
@@ -65,46 +66,50 @@ class ArticleForm extends React.Component {
     }
 
     this.setState({
-      thumbnail: initialValues && initialValues.thumb !== null ? initialValues.thumb : null,
+      thumbnail:
+        initialValues && initialValues.thumb !== null
+          ? initialValues.thumb
+          : null,
       data: formData,
     });
 
-    this.content = initialValues && initialValues.content ? initialValues.content : null;
+    this.content =
+      initialValues && initialValues.content ? initialValues.content : null;
   };
 
   componentDidUpdate = () => {
     const { data, loaded } = this.state;
-    if(data !== null && !loaded){
+    if (data !== null && !loaded) {
       this.setState({ loaded: true });
       this.form.current.setFieldsValue(data);
     }
-  }
-  
+  };
+
   setThumbnail = (image) => {
-    this.setState({thumbnail: image});
-  }
+    this.setState({ thumbnail: image });
+  };
 
   handleFinish = (values) => {
     const { onFinish } = this.props;
-    if(this.state.thumbnail !== null){
+    if (this.state.thumbnail !== null) {
       values.thumb = this.state.thumbnail;
     }
     values.content = this.content;
     onFinish(values);
-  }
+  };
 
   handleChange = (value) => {
     this.content = value();
-  }
+  };
 
   render() {
     const { loading, categories } = this.props;
     const { data, thumbnail } = this.state;
 
     const editorProps = {
-      onChange: this.handleChange
+      onChange: this.handleChange,
     };
-    
+
     return (
       <div>
         <Form ref={this.form} layout="vertical" onFinish={this.handleFinish}>
@@ -126,8 +131,15 @@ class ArticleForm extends React.Component {
           <div className={styles.contentItem}>
             <div>Content</div>
             <div className={styles.contentEditor}>
-              {data && data.content && <Editor {...editorProps} defaultValue={data.content} />}
-              {data && !data.content && <Editor {...editorProps} defaultValue={"Write Markdown here!"} />}
+              {data && data.content && (
+                <MarkdownEditor {...editorProps} defaultValue={data.content} />
+              )}
+              {data && !data.content && (
+                <MarkdownEditor
+                  {...editorProps}
+                  defaultValue={"Write Markdown here!"}
+                />
+              )}
             </div>
           </div>
           <Form.Item label="Publish" name="is_publish" valuePropName="checked">
@@ -158,11 +170,20 @@ class ArticleForm extends React.Component {
           </Form.Item>
           <div className={styles.thumbItem}>
             <div>Thumbnail</div>
-            <div><ThumbnailUploader defaultValue={thumbnail} onThumbnailChanged={this.setThumbnail} /></div>
+            <div>
+              <ThumbnailUploader
+                defaultValue={thumbnail}
+                onThumbnailChanged={this.setThumbnail}
+              />
+            </div>
           </div>
           <Divider dashed />
           <Form.Item>
-            <Button type="primary" htmlType="submit" {...this.props.submitButtonProps}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              {...this.props.submitButtonProps}
+            >
               Submit
             </Button>
           </Form.Item>
