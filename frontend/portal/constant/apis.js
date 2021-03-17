@@ -15,3 +15,4 @@ export const API_AVATAR_UPLOAD = basePrefix + "/attachment/upload-avatar"
 export const API_AVATAR = (path, size) => basePrefix + `/attachment/avatar/${path}/${size}/`
 
 export const API_ARCHIVES = langApiPrefix + "/archive/"
+export const API_CATEGORY = langApiPrefix + "/archive/categories/"

@@ -1,58 +1,88 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { connect } from "react-redux";
+
 import { Link } from "react-router-dom";
 import { Menu } from "antd";
 import * as urls from "@portal/constant/menu_urls.js";
-import { useSelector } from "react-redux";
 
-const index = () => {
-  const { login } = useSelector(state => ({
-    login: state.login,
-  }));
+import { fetch } from "@portal/store/reducers/category";
 
-  useEffect(() => {
-    if (!login.loggedIn && sessionStorage.getItem("token") != null) {
-      console.log("logedin");
-    }
-  });
+class Header extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      current: 0,
+    };
+  }
 
-  const [current, setCurrent] = useState(0);
+  componentDidMount = () => {
+    this.props.fetch({pageSize: 5});
+  };
 
-  return (
-    <div>
-      <Menu
-        onClick={(e) => setCurrent(e.key)}
-        selectedKeys={[current]}
-        mode="horizontal"
-      >
-        <Menu.Item key="Logo">
-          <Link to={urls.HOME}>Map To Canada</Link>
-        </Menu.Item>
-        <Menu.Item key="home">
-          <Link to={urls.HOME}>首页</Link>
-        </Menu.Item>
-        <Menu.Item key="faq">
-          <Link to={urls.FAQ}>FAQ</Link>
-        </Menu.Item>
-        <Menu.Item key="about">
-          <Link to={urls.ABOUT}>关于</Link>
-        </Menu.Item>
-        { login.loggedIn && 
-          <Menu.Item key="profile">
-            <Link to={urls.PROFILE}>Profile</Link>
-          </Menu.Item>}
-        { login.loggedIn && 
-          <Menu.Item key="signout">
-            <Link to={urls.SIGN_OUT}>Sign out</Link>
-          </Menu.Item>}
-        { !login.loggedIn && <Menu.Item key="signin">
-          <Link to={urls.SIGN_IN}>Sign In</Link>
-        </Menu.Item> }
-        { login.isStaff && <Menu.Item key="admin">
-          <a href={urls.ADMIN}>Admin</a>
-        </Menu.Item> }
-      </Menu>
-    </div>
-  );
-};
+  render() {
+    const { current } = this.state;
+    const { login, categories } = this.props;
 
-export default index;
+    const menuStyle = {
+      border: "none",
+      width: "100%",
+      background: "transparent",
+    };
+
+    return (
+      <div>
+        <div>
+          <Menu
+            onClick={(e) => this.setState({ current: e.key })}
+            selectedKeys={[current]}
+            mode="horizontal"
+            style={menuStyle}
+          >
+            <Menu.Item key="home">
+              <Link to={urls.HOME}>Map To Canada</Link>
+            </Menu.Item>
+            {categories && categories.results && 
+              categories.results.map((item) => (
+                <Menu.Item key={"menu_" + item.id}>
+                  <Link to={urls.CATEGORY_ENTITY(item.code)}>{item.title_cn}</Link>
+                </Menu.Item>
+              ))
+            }
+            {login.loggedIn && (
+              <Menu.Item key="profile">
+                <Link to={urls.PROFILE}>Profile</Link>
+              </Menu.Item>
+            )}
+            {login.loggedIn && (
+              <Menu.Item key="signout">
+                <Link to={urls.SIGN_OUT}>Sign out</Link>
+              </Menu.Item>
+            )}
+            {!login.loggedIn && (
+              <Menu.Item key="signin">
+                <Link to={urls.SIGN_IN}>Sign In</Link>
+              </Menu.Item>
+            )}
+            {login.isStaff && (
+              <Menu.Item key="admin">
+                <a href={urls.ADMIN}>Admin</a>
+              </Menu.Item>
+            )}
+          </Menu>
+        </div>
+      </div>
+    );
+  }
+}
+
+const mapState = (state) => ({
+  login: state.login,
+  categories: state.category.categories,
+  loading: state.category.loading,
+});
+
+const mapDispatch = (dispatch) => ({
+  fetch: (data) => dispatch(fetch(data))
+})
+
+export default connect(mapState, mapDispatch)(Header);
