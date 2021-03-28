@@ -12,6 +12,7 @@ import Home from "./app/Home";
 import SignIn from "./app/Login";
 import About from "./app/About";
 import Category from "./app/Category";
+import Archive from "./app/Archive";
 
 import { authToken } from "@portal/store/reducers/login";
 
@@ -33,6 +34,7 @@ class App extends React.Component {
           <Route exact path={urls.SIGN_IN} render={(p) => <SignIn {...p} />} />
           <Route exact path={urls.ABOUT} render={(p) => <About {...p} />} />
           <Route exact path={urls.CATEGORY} render={(p) => <Category {...p} />} />
+          <Route exact path={urls.ARCHIVE} render={(p) => <Archive {...p} />} />
         </Switch>
         <Footer />
         <TopButton />

@@ -20,6 +20,7 @@ urlpatterns = [
 ]
 
 urlpatterns += format_suffix_patterns([
+    path('a/<slug:link>/', public.ArchiveViewSet.as_view({'get': 'retrieve'}, lookup_field='link')),
 ])
 
 urlpatterns += router.urls

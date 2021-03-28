@@ -18,3 +18,7 @@ export const SIGN_OUT = PORTAL_PREFIX + "/signout";
 // Category
 export const CATEGORY = PORTAL_PREFIX + "/c/:code";
 export const CATEGORY_ENTITY = (code) => PORTAL_PREFIX + `/c/${code}`;
+
+// Archive
+export const ARCHIVE = PORTAL_PREFIX + "/:code";
+export const ARCHIVE_ENTITY = (code) => PORTAL_PREFIX + `/${code}`;
