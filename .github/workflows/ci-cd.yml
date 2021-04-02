@@ -336,9 +336,6 @@ jobs:
           
           kubectl apply -f k8s/deployment.dev-backend.yaml
           kubectl apply -f k8s/service.dev-backend.yaml
-          
-          kubectl apply -f k8s/clusterissuer.yaml
-          kubectl apply -f k8s/ingress.yaml
 
       - name: Upload kubernetes config
         uses: actions/upload-artifact@v2
@@ -348,6 +345,7 @@ jobs:
             k8s/deployment.django.yaml
             k8s/deployment.frontend.yaml
             k8s/clusterissuer.yaml
+            k8s/certificate.yaml
             k8s/service.frontend.yaml
             k8s/service.django.yaml
-            k8s/ingress.yaml
+            k8s/ingressroute.yaml

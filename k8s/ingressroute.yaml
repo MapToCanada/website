@@ -1,0 +1,51 @@
+# initialization:
+#
+#  kubectl apply -f clusterissuer.yaml
+#  kubectl apply -f certificate.yaml
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: maptocanada-stripprefix
+spec:
+  stripPrefix:
+    prefixes:
+      - /backend
+    forceSlash: false
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: maptocanada-tls
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: (Host(`maptocanada.ca`) || Host(`www.maptocanada.ca`))
+      priority: 9
+      services:
+        - name: maptocanada-frontend
+          port: 80
+    - kind: Rule
+      match: (Host(`maptocanada.ca`) || Host(`www.maptocanada.ca`)) && PathPrefix(`/backend`)
+      priority: 10 
+      services:
+        - name: maptocanada-django
+          port: 8000
+      middlewares:
+        - name: maptocanada-stripprefix
+    - kind: Rule
+      match: Host(`backend.maptocanada.ca`)
+      priority: 9
+      services:
+        - name: maptocanada-django
+          port: 8000
+      middlewares:
+        - name: maptocanada-stripprefix
+  tls:
+    secretName: maptocanada-issuer-key
+
