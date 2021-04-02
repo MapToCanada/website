@@ -2,16 +2,17 @@ apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: maptocanada-issuer
+  namespace: default
 spec:
   acme:
     # You must replace this email address with your own.
     # Let's Encrypt will use this to contact you about expiring
     # certificates, and issues related to your account.
-    email: yeti@freeyeti.net
+    email: liujin834@gmail.com
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       # Secret resource that will be used to store the account's private key.
-      name: maptocanada-private-key
+      name: maptocanada-issuer-key
     solvers:
       - http01:
           ingress:

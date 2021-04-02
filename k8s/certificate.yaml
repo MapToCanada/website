@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: maptocanada-cert
+  namespace: default
+spec:
+  commonName: maptocanada.ca
+  secretName: maptocanada-issuer-key
+  dnsNames:
+    - maptocanada.ca
+    - www.maptocanada.ca
+    - backend.maptocanada.ca
+  issuerRef:
+    name: maptocanada-issuer
+    kind: ClusterIssuer
