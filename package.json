@@ -5,16 +5,16 @@
     "build": "NODE_ENV=production webpack --mode=production"
   },
   "devDependencies": {
-    "@ant-design/icons": "^4.4.0",
-    "@babel/core": "^7.12.13",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-decorators": "^7.12.12",
-    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
+    "@ant-design/icons": "^4.6.2",
+    "@babel/core": "^7.14.8",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/plugin-proposal-decorators": "^7.14.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.14.7",
     "@babel/polyfill": "^7.12.1",
-    "@babel/preset-env": "^7.12.13",
-    "@babel/preset-react": "^7.12.13",
-    "@reduxjs/toolkit": "^1.5.0",
-    "antd": "^4.13.0",
+    "@babel/preset-env": "^7.14.8",
+    "@babel/preset-react": "^7.14.5",
+    "@reduxjs/toolkit": "^1.6.1",
+    "antd": "^4.16.8",
     "axios": "^0.21.1",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
@@ -25,8 +25,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "latest",
-    "eslint-webpack-plugin": "^2.5.4",
-    "html-webpack-plugin": "^5.3.1",
+    "eslint-webpack-plugin": "^3.0.1",
+    "html-webpack-plugin": "^5.3.2",
     "js-cookie": "^2.2.1",
     "less": "^4.1.0",
     "less-loader": "^7.3.0",
@@ -46,12 +46,12 @@
     "style-loader": "^2.0.0",
     "styled-components": "^5.2.1",
     "url-loader": "^4.1.1",
-    "webpack": "^5.35.1",
-    "webpack-cli": "^4.6.0",
+    "webpack": "^5.46.0",
+    "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   }
 }
