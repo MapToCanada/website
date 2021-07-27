@@ -84,7 +84,7 @@ jobs:
         env:
           IMAGE_TAG: ${{ steps.vars.outputs.tag }}
         run: |
-          docker push $IMAGE_NAME_DJANGO:$IMAGE_TAG
+          docker --config /root/.docker/map2canada/config.json push $IMAGE_NAME_DJANGO:$IMAGE_TAG
           
       - name: Upload docker-compose.django.yaml
         uses: actions/upload-artifact@v2
@@ -138,7 +138,7 @@ jobs:
         env:
           IMAGE_TAG: ${{ steps.vars.outputs.tag }}
         run: |
-          docker push $IMAGE_NAME_NGINX:$IMAGE_TAG
+          docker --config /root/.docker/map2canada/config.json push $IMAGE_NAME_NGINX:$IMAGE_TAG
           
       - name: Upload docker-compose.frontend.yaml
         uses: actions/upload-artifact@v2
